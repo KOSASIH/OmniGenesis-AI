@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+venv/
+env/
+.env
+
+# Build
+artifacts/
+cache/
+typechain-types/
+dist/
+build/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+coverage.json
+.nyc_output/
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# Deployment
+deployments/localhost/
+.openzeppelin/
+
+# Misc
+*.tgz

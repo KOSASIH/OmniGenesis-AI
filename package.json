@@ -1,0 +1,36 @@
+{
+  "name": "omnigenesis-ai",
+  "version": "1.0.0",
+  "description": "OmniGenesis AI: The Divine Architect of Infinite Innovation",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
+    "deploy:bsc-testnet": "hardhat run scripts/deploy.ts --network bscTestnet",
+    "deploy:polygon-mumbai": "hardhat run scripts/deploy.ts --network polygonMumbai",
+    "lint:sol": "solhint 'contracts/**/*.sol'",
+    "clean": "hardhat clean",
+    "node": "hardhat node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KOSASIH/OmniGenesis-AI.git"
+  },
+  "author": "KOSASIH",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts-upgradeable": "^5.0.0",
+    "hardhat": "^2.19.0",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.0",
+    "solhint": "^4.0.0",
+    "dotenv": "^16.3.0",
+    "@chainlink/contracts": "^0.8.0"
+  },
+  "dependencies": {
+    "ethers": "^6.9.0"
+  }
+}
