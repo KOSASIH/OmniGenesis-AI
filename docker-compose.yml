@@ -51,7 +51,7 @@ services:
     environment:
       POSTGRES_DB: omnigenesis
       POSTGRES_USER: omni
-      POSTGRES_PASSWORD: omnipass
+      POSTGRES_PASSWORD: MY_PASSWORD
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
