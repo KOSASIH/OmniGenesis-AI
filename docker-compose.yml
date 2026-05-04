@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      target: backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://omni:omnipass@db:5432/omnigenesis
+      - REDIS_URL=redis://redis:6379
+      - AGENT_SWARM_SIZE=10
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  agents:
+    build:
+      context: .
+      target: agent-runner
+    environment:
+      - DATABASE_URL=postgresql://omni:omnipass@db:5432/omnigenesis
+      - REDIS_URL=redis://redis:6379
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+      - redis
+    restart: unless-stopped
+    deploy:
+      replicas: 3
+
+  frontend:
+    build:
+      context: .
+      target: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: omnigenesis
+      POSTGRES_USER: omni
+      POSTGRES_PASSWORD: omnipass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=omnigenesis
+    volumes:
+      - grafanadata:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
+  grafanadata:
