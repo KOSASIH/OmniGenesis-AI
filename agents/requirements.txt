@@ -23,7 +23,7 @@ pandas==2.2.1
 cryptography==42.0.5
 
 # Testing
-pytest==8.1.0
+pytest==9.0.3
 pytest-asyncio==0.23.5
 
 # Monitoring
