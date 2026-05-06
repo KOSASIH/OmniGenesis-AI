@@ -72,3 +72,192 @@ body { background: #020209; color: white; overflow-x: hidden; }
 .hexagon { clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); }
 
 .particle { position: absolute; border-radius: 50%; pointer-events: none; animation: float 4s ease-in-out infinite; }
+
+/* ── New super-advanced effects ── */
+@keyframes matrix-fall {
+  0% { transform: translateY(-100vh); opacity: 1; }
+  95% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+@keyframes quantum-flicker {
+  0%,100% { opacity: 1; } 10% { opacity: 0.6; } 20% { opacity: 1; } 50% { opacity: 0.8; } 60% { opacity: 1; } 80% { opacity: 0.7; } 90% { opacity: 1; }
+}
+@keyframes time-wave {
+  0% { transform: scaleX(1) scaleY(1); opacity: 0.8; }
+  50% { transform: scaleX(1.15) scaleY(0.85); opacity: 0.5; }
+  100% { transform: scaleX(1) scaleY(1); opacity: 0.8; }
+}
+@keyframes glitch {
+  0%,100% { clip-path: none; transform: none; }
+  10% { clip-path: inset(20% 0 60% 0); transform: translate(-4px, 0); }
+  20% { clip-path: inset(60% 0 10% 0); transform: translate(4px, 0); }
+  30% { clip-path: none; transform: none; }
+  40% { clip-path: inset(40% 0 30% 0); transform: translate(-2px, 2px); }
+  50% { clip-path: none; transform: none; }
+}
+@keyframes consciousness-pulse {
+  0%,100% { box-shadow: 0 0 8px rgba(168,85,247,0.4), 0 0 30px rgba(168,85,247,0.15); }
+  50% { box-shadow: 0 0 20px rgba(168,85,247,0.8), 0 0 60px rgba(168,85,247,0.3), 0 0 100px rgba(168,85,247,0.1); }
+}
+@keyframes data-stream {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+@keyframes ripple {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+@keyframes vortex {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes type-in {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes qubit-rotate {
+  0% { transform: rotateY(0deg) rotateX(20deg); }
+  100% { transform: rotateY(360deg) rotateX(20deg); }
+}
+@keyframes prophecy-appear {
+  0% { opacity: 0; transform: translateX(-20px) scale(0.95); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes energy-flow {
+  0% { stroke-dashoffset: 1000; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes portal-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes neon-flicker {
+  0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; }
+  20%,24%,55% { opacity: 0.4; }
+}
+@keyframes aurora {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+@keyframes float-up {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-40px); opacity: 0; }
+}
+
+.animate-quantum-flicker { animation: quantum-flicker 2s ease-in-out infinite; }
+.animate-time-wave { animation: time-wave 3s ease-in-out infinite; }
+.animate-glitch { animation: glitch 3s ease-in-out infinite; }
+.animate-consciousness { animation: consciousness-pulse 2.5s ease-in-out infinite; }
+.animate-vortex { animation: vortex 8s linear infinite; }
+.animate-qubit { animation: qubit-rotate 4s linear infinite; }
+.animate-prophecy { animation: prophecy-appear 0.5s ease-out; }
+.animate-portal { animation: portal-spin 10s linear infinite; }
+.animate-neon-flicker { animation: neon-flicker 3s step-end infinite; }
+.animate-aurora { animation: aurora 6s ease infinite; }
+
+/* Glass variants */
+.glass-gold   { background: rgba(245,158,11,0.06); backdrop-filter: blur(20px); border: 1px solid rgba(245,158,11,0.2); }
+.glass-red    { background: rgba(239,68,68,0.06); backdrop-filter: blur(20px); border: 1px solid rgba(239,68,68,0.15); }
+.glass-dark   { background: rgba(0,0,0,0.6); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.05); }
+
+/* Glow variants */
+.glow-gold  { box-shadow: 0 0 30px rgba(245,158,11,0.4); }
+.glow-red   { box-shadow: 0 0 30px rgba(239,68,68,0.35); }
+.glow-white { box-shadow: 0 0 20px rgba(255,255,255,0.15); }
+.glow-strong-purple { box-shadow: 0 0 60px rgba(168,85,247,0.6), 0 0 120px rgba(168,85,247,0.2); }
+
+/* Gradient texts */
+.gradient-text-aurora { background: linear-gradient(90deg, #a855f7, #06b6d4, #10b981, #a855f7); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: aurora 4s ease infinite; }
+.gradient-text-fire { background: linear-gradient(135deg, #f97316, #ef4444, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* Special effects */
+.data-stream-bg {
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(168,85,247,0.03) 2px, rgba(168,85,247,0.03) 4px);
+  background-size: 100% 8px;
+  animation: data-stream 0.5s linear infinite;
+}
+.aurora-bg {
+  background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(6,182,212,0.08), rgba(236,72,153,0.1), rgba(16,185,129,0.08));
+  background-size: 400% 400%;
+  animation: aurora 8s ease infinite;
+}
+.quantum-grid {
+  background-image: linear-gradient(rgba(168,85,247,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,85,247,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.matrix-bg {
+  background: linear-gradient(180deg, rgba(0,255,65,0.03) 0%, transparent 100%);
+}
+.terminal-bg {
+  background: rgba(0,8,0,0.9);
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(0,255,65,0.05) 0%, transparent 60%);
+}
+.portal-ring {
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #a855f7, #ec4899, #06b6d4, #10b981, #a855f7);
+  animation: portal-spin 4s linear infinite;
+}
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid rgba(168,85,247,0.5);
+  animation: ripple 1.5s ease-out infinite;
+}
+.consciousness-bg {
+  background: radial-gradient(ellipse at center, rgba(168,85,247,0.15) 0%, rgba(6,182,212,0.08) 40%, transparent 70%);
+}
+
+/* Terminal cursor */
+.terminal-cursor::after {
+  content: '█';
+  animation: blink-cursor 1s step-end infinite;
+  color: #00ff41;
+}
+
+/* Holographic card */
+.holo-card {
+  background: linear-gradient(135deg,
+    rgba(168,85,247,0.12) 0%, rgba(236,72,153,0.08) 20%,
+    rgba(6,182,212,0.1) 40%, rgba(16,185,129,0.08) 60%,
+    rgba(245,158,11,0.1) 80%, rgba(168,85,247,0.12) 100%);
+  background-size: 600% 600%;
+  animation: aurora 10s ease infinite;
+}
+
+/* Circuit trace lines */
+.circuit-trace {
+  stroke-dasharray: 20 5;
+  animation: energy-flow 2s linear infinite;
+}
+
+/* Prophecy card */
+.prophecy-card {
+  background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(245,158,11,0.06));
+  border: 1px solid rgba(245,158,11,0.2);
+  position: relative;
+  overflow: hidden;
+}
+.prophecy-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.04), transparent);
+  animation: shimmer 3s ease-in-out infinite;
+  background-size: 200% 100%;
+}
+
+/* Responsive typography */
+.mono { font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; }
+
+/* Scrollbar for terminal */
+.terminal-scroll::-webkit-scrollbar { width: 3px; }
+.terminal-scroll::-webkit-scrollbar-thumb { background: rgba(0,255,65,0.3); }
+
