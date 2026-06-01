@@ -19,7 +19,7 @@ We welcome contributions across all layers — AGI research, smart contracts, fr
 ### Fork & Clone
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/OmniGenesis-AI.git
+git clone https://github.com/KOSASIH/OmniGenesis-AI.git
 cd OmniGenesis-AI
 npm install
 cd frontend && bun install && cd ..
