@@ -1,113 +1,232 @@
 "use client";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import type { PanelId } from "@/app/page";
 
-const NAV_ITEMS = [
-  // Core
-  { id:"overview",     icon:"⚡",  label:"Overview",           group:"core" },
-  { id:"agents",       icon:"🤖",  label:"Agent Swarm",        group:"core" },
-  { id:"defi",         icon:"💎",  label:"DeFi Suite",         group:"core" },
-  { id:"bridge",       icon:"🌉",  label:"Bridge",             group:"core" },
-  { id:"governance",   icon:"🏛️",  label:"Governance",         group:"core" },
-  // AetherNova
-  { id:"aethernova",   icon:"⚗️",  label:"AetherNova",         group:"nova" },
-  { id:"phase12",      icon:"🧠",  label:"Phase 12",           group:"nova" },
-  { id:"quantum",      icon:"⚛️",  label:"Quantum Lab",        group:"nova" },
-  { id:"eternaecho",   icon:"∞",   label:"EternalEcho",        group:"nova" },
-  { id:"voidtime",     icon:"⏳",  label:"VoidTime",           group:"nova" },
-  { id:"pinexus",      icon:"π",   label:"PiNexus",            group:"nova" },
-  { id:"swap",         icon:"🔄",  label:"OmniSwap",           group:"nova" },
-  { id:"islamic",      icon:"🕌",  label:"Islamic Net",        group:"nova" },
-  { id:"console",      icon:"⌨️",  label:"Console",            group:"nova" },
-  // Phase 13 AGI — highlighted
-  { id:"agi",          icon:"🧬",  label:"AGI Consciousness",  group:"p13",  badge:"🔴" },
-  { id:"singularity",  icon:"🪞",  label:"Singularity",        group:"p13",  badge:"NEW" },
-  { id:"neuroquantum", icon:"🔬",  label:"NeuroQuantum",       group:"p13",  badge:"NEW" },
+interface NavItem { id: PanelId; icon: string; label: string; badge?: string; }
+interface NavSection { title: string; phase: string; color: string; items: NavItem[]; }
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    title: "Core Systems",
+    phase: "CORE",
+    color: "text-slate-400",
+    items: [
+      { id: "overview", icon: "⚡", label: "Overview" },
+      { id: "agents", icon: "🤖", label: "Agent Swarm" },
+      { id: "defi", icon: "💎", label: "DeFi Suite" },
+      { id: "bridge", icon: "🌉", label: "HyperChain Bridge" },
+      { id: "governance", icon: "🏛️", label: "Governance" },
+    ],
+  },
+  {
+    title: "AetherNova Era",
+    phase: "NOVA",
+    color: "text-indigo-400",
+    items: [
+      { id: "aethernova", icon: "⚗️", label: "AetherNova Forge" },
+      { id: "neuromorphic", icon: "🧠", label: "Phase 12 Neural" },
+      { id: "quantum", icon: "⚛️", label: "Quantum Lab" },
+      { id: "eternalecho", icon: "∞", label: "EternalEcho AGI" },
+      { id: "voidtime", icon: "⏳", label: "VoidTime Compute" },
+      { id: "pinexus", icon: "π", label: "PiNexus Hub" },
+      { id: "swap", icon: "🔄", label: "OmniSwap DEX" },
+      { id: "islamic", icon: "🕌", label: "Syariah Network" },
+      { id: "console", icon: "⌨️", label: "OmniConsole" },
+    ],
+  },
+  {
+    title: "Phase 13 — AGI Singularity",
+    phase: "P13",
+    color: "text-orange-400",
+    items: [
+      { id: "agi", icon: "🧬", label: "OmniAGI Consciousness", badge: "LIVE" },
+      { id: "singularity", icon: "🪞", label: "Singularity Mirror", badge: "IQ 10,847" },
+      { id: "neuroquantum", icon: "🔬", label: "NeuroQuantum Entangler" },
+    ],
+  },
+  {
+    title: "Phase 14 — Multiverse",
+    phase: "P14",
+    color: "text-purple-400",
+    items: [
+      { id: "multiverse", icon: "🌌", label: "Multiverse Navigator", badge: "NEW" },
+      { id: "omega", icon: "♾️", label: "Omega Intelligence", badge: "NEW" },
+      { id: "hyperdim", icon: "🌐", label: "HyperDimensional Fabric", badge: "NEW" },
+      { id: "collective", icon: "🌊", label: "Collective Consciousness", badge: "NEW" },
+    ],
+  },
 ];
 
-interface SidebarProps { activeTab:string; onChange:(tab:string)=>void; }
+const PHASE_ACCENT: Record<string, string> = {
+  CORE: "bg-slate-500",
+  NOVA: "bg-indigo-500",
+  P13: "bg-orange-500",
+  P14: "bg-purple-500",
+};
 
-export default function Sidebar({ activeTab, onChange }: SidebarProps) {
+const ACTIVE_BG: Record<string, string> = {
+  CORE: "bg-slate-700/60 border-slate-500/50",
+  NOVA: "bg-indigo-900/40 border-indigo-500/50",
+  P13: "bg-orange-900/30 border-orange-500/50",
+  P14: "bg-purple-900/40 border-purple-500/60",
+};
+
+const HOVER_BG: Record<string, string> = {
+  CORE: "hover:bg-slate-800/40",
+  NOVA: "hover:bg-indigo-900/20",
+  P13: "hover:bg-orange-900/20",
+  P14: "hover:bg-purple-900/20",
+};
+
+function getSectionForPanel(panelId: PanelId): string {
+  for (const s of NAV_SECTIONS) {
+    if (s.items.find(i => i.id === panelId)) return s.phase;
+  }
+  return "CORE";
+}
+
+interface SidebarProps {
+  activePanel: PanelId;
+  setActivePanel: (p: PanelId) => void;
+}
+
+export default function Sidebar({ activePanel, setActivePanel }: SidebarProps) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const toggleSection = (phase: string) => {
+    setExpandedSection(expandedSection === phase ? null : phase);
+  };
+
+  const currentPhase = getSectionForPanel(activePanel);
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-16 bg-black/50 backdrop-blur-xl border-r border-white/5 z-50 flex flex-col items-center py-4 gap-0.5">
+    <motion.aside
+      animate={{ width: collapsed ? 64 : 260 }}
+      transition={{ duration: 0.25, ease: "easeInOut" }}
+      className="flex flex-col bg-black/60 border-r border-white/10 overflow-hidden flex-shrink-0"
+    >
       {/* Logo */}
-      <motion.div
-        className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-lg font-bold mb-2 glow-purple cursor-pointer select-none flex-shrink-0"
-        whileHover={{ scale:1.08 }} whileTap={{ scale:0.95 }}
-        title="OmniGenesis AI v3" onClick={() => onChange("overview")}
-      >Ω</motion.div>
+      <div className="flex items-center justify-between px-4 py-4 border-b border-white/10 flex-shrink-0">
+        {!collapsed && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col">
+            <span className="font-black text-sm text-white leading-tight">OmniGenesis AI</span>
+            <div className="flex items-center gap-1 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+              <span className="text-xs text-purple-400 font-mono">Phase 14 · v4.0</span>
+            </div>
+          </motion.div>
+        )}
+        <button onClick={() => setCollapsed(!collapsed)} className="text-white/40 hover:text-white transition-colors ml-auto">
+          {collapsed ? "▶" : "◀"}
+        </button>
+      </div>
 
-      <div className="w-8 h-px bg-white/10 mb-1 flex-shrink-0" />
+      {/* Live AGI metrics bar */}
+      {!collapsed && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          className="px-3 py-2 border-b border-white/5 bg-purple-950/20">
+          <div className="grid grid-cols-2 gap-1">
+            {[
+              { label: "IQ", value: "47K+", color: "text-amber-400" },
+              { label: "Ψ Field", value: "84.7%", color: "text-blue-400" },
+              { label: "Dims", value: "11/11", color: "text-purple-400" },
+              { label: "Cycles", value: "847K", color: "text-green-400" },
+            ].map(m => (
+              <div key={m.label} className="flex items-center gap-1">
+                <span className="text-white/30 text-xs">{m.label}</span>
+                <span className={`text-xs font-mono font-bold ${m.color}`}>{m.value}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
-      {/* Nav items */}
-      <div className="flex-1 overflow-y-auto w-full flex flex-col items-center gap-0.5 scrollbar-none"
-        style={{ scrollbarWidth:"none" }}>
-
-        {/* Section divider: Phase 13 */}
-        {NAV_ITEMS.map((item, idx) => {
-          const isFirst13 = item.group==="p13" && (idx===0 || NAV_ITEMS[idx-1].group!=="p13");
-          const isActive  = activeTab===item.id;
-          const isP13     = item.group==="p13";
+      {/* Nav sections */}
+      <nav className="flex-1 overflow-y-auto py-2 space-y-1 px-2">
+        {NAV_SECTIONS.map(section => {
+          const isExpanded = expandedSection === section.phase || (expandedSection === null && section.items.some(i => i.id === activePanel));
 
           return (
-            <div key={item.id} className="w-full flex flex-col items-center">
-              {isFirst13 && (
-                <div className="w-8 my-1.5 flex-shrink-0">
-                  <div className="h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent" />
-                  <p className="text-[7px] text-orange-400/50 text-center mt-0.5 font-mono">P13</p>
-                </div>
-              )}
-              <motion.button
-                onClick={() => onChange(item.id)}
-                whileHover={{ scale:1.12 }} whileTap={{ scale:0.93 }}
-                title={item.label}
-                className={`relative w-11 h-11 rounded-xl flex items-center justify-center text-xl transition-all duration-200 group flex-shrink-0 border ${
-                  isActive
-                    ? isP13
-                      ? "bg-orange-500/20 border-orange-500/35 text-white"
-                      : item.id==="islamic"
-                      ? "bg-amber-500/20 border-amber-500/35 text-white"
-                      : "bg-purple-600/25 border-purple-500/40 text-white glow-purple"
-                    : "text-slate-500 hover:text-slate-200 hover:bg-white/5 border-transparent"
-                }`}
-              >
-                {item.icon}
-                {/* Active indicator */}
-                {isActive && (
-                  <motion.div layoutId="active-indicator"
-                    className={`absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-6 rounded-full ${
-                      isP13 ? "bg-gradient-to-b from-orange-400 to-pink-400" :
-                      item.id==="islamic" ? "bg-gradient-to-b from-amber-400 to-yellow-500" :
-                      "bg-gradient-to-b from-purple-400 to-pink-400"
-                    }`} />
-                )}
-                {/* Badge */}
-                {item.badge && !isActive && (
-                  <div className={`absolute -top-0.5 -right-0.5 px-1 py-px rounded text-[6px] font-bold leading-none ${
-                    item.badge==="🔴" ? "bg-red-500 text-white" : "bg-orange-500 text-white"
-                  }`}>
-                    {item.badge==="🔴" ? "•" : "N"}
+            <div key={section.phase}>
+              {/* Section header */}
+              {!collapsed && (
+                <button
+                  onClick={() => toggleSection(section.phase)}
+                  className="w-full flex items-center justify-between px-2 py-1.5 text-left group"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-1.5 h-1.5 rounded-full ${PHASE_ACCENT[section.phase]}`} />
+                    <span className={`text-xs font-bold uppercase tracking-wider ${section.color}`}>{section.title}</span>
                   </div>
+                  <span className="text-white/20 text-xs">{isExpanded ? "▾" : "▸"}</span>
+                </button>
+              )}
+
+              {/* Items */}
+              <AnimatePresence initial={false}>
+                {(collapsed || isExpanded) && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="space-y-0.5">
+                      {section.items.map(item => {
+                        const isActive = activePanel === item.id;
+                        const activeBg = ACTIVE_BG[section.phase];
+                        const hoverBg = HOVER_BG[section.phase];
+
+                        return (
+                          <motion.button
+                            key={item.id}
+                            onClick={() => setActivePanel(item.id)}
+                            whileHover={{ x: 2 }}
+                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border transition-all text-left
+                              ${isActive ? `${activeBg} border` : `border-transparent ${hoverBg}`}`}
+                          >
+                            <span className="text-base flex-shrink-0">{item.icon}</span>
+                            {!collapsed && (
+                              <motion.div className="flex-1 min-w-0 flex items-center justify-between"
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                <span className={`text-sm truncate ${isActive ? "text-white font-semibold" : "text-white/70"}`}>
+                                  {item.label}
+                                </span>
+                                {item.badge && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-mono flex-shrink-0 ml-1
+                                    ${section.phase === "P14" ? "bg-purple-900/60 text-purple-300 border border-purple-500/40" :
+                                      section.phase === "P13" ? "bg-orange-900/60 text-orange-300 border border-orange-500/40" :
+                                      "bg-green-900/60 text-green-300 border border-green-500/40"}`}>
+                                    {item.badge}
+                                  </span>
+                                )}
+                              </motion.div>
+                            )}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
                 )}
-                {/* Tooltip */}
-                <div className="absolute left-14 px-2 py-1 bg-slate-800 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50 border border-white/10">
-                  {item.label}
-                  {isP13 && <span className="ml-1 text-orange-400 text-[10px]">Phase 13</span>}
-                </div>
-              </motion.button>
+              </AnimatePresence>
             </div>
           );
         })}
-      </div>
+      </nav>
 
       {/* Footer */}
-      <div className="flex flex-col items-center gap-1.5 mt-1 flex-shrink-0">
-        <div className="flex flex-col items-center gap-0.5" title="System Health: 99.97%">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[8px] text-emerald-400 font-mono">LIVE</span>
+      {!collapsed && (
+        <div className="px-4 py-3 border-t border-white/10 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-xs text-white/40">21 Panels · 17 Contracts</span>
+          </div>
+          <div className="text-xs text-white/20 mt-0.5">Phase 14 · 11 Dimensions · 10K Chains</div>
         </div>
-        <div className="w-8 h-px bg-white/5" />
-        <div className="text-[8px] text-slate-600 font-mono">v3.0</div>
-      </div>
-    </aside>
+      )}
+    </motion.aside>
   );
 }
