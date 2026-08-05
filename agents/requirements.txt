@@ -20,7 +20,7 @@ pydantic==2.6.3
 pandas==2.2.1
 
 # Crypto
-cryptography==48.0.1
+cryptography==50.0.0
 
 # Testing
 pytest==9.0.3
