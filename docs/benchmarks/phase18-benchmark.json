@@ -1,0 +1,67 @@
+{
+ "description": "Routing benchmark over the 1,000-entry Phase 17 chain registry. Solvers are deterministic Python functions, not LLMs. Accuracy is measured against an independent brute-force reference. Adaptive router learns only from audited tasks.",
+ "setup": {
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "trainTasks": 300,
+  "testTasks": 600,
+  "auditRate": 0.25,
+  "rewardCostWeight": 0.05,
+  "tolerance": "counts within max(3, 15%); point queries exact"
+ },
+ "summary": {
+  "adaptive": {
+   "accuracy": 0.9697,
+   "meanCost": 0.5019,
+   "accuracyMin": 0.9383,
+   "accuracyMax": 1.0
+  },
+  "random": {
+   "accuracy": 0.6777,
+   "meanCost": 0.3767,
+   "accuracyMin": 0.6383,
+   "accuracyMax": 0.6917
+  },
+  "always_index": {
+   "accuracy": 1.0,
+   "meanCost": 1.0,
+   "accuracyMin": 1.0,
+   "accuracyMax": 1.0
+  },
+  "always_sample10": {
+   "accuracy": 0.1713,
+   "meanCost": 0.1,
+   "accuracyMin": 0.1417,
+   "accuracyMax": 0.2083
+  },
+  "always_stale": {
+   "accuracy": 0.8873,
+   "meanCost": 0.05,
+   "accuracyMin": 0.8617,
+   "accuracyMax": 0.8967
+  }
+ },
+ "meanAuditsPerSeed": 75.4,
+ "learnedPolicy(seed1)": {
+  "count_category": {
+   "index": 0.95,
+   "sample10": 0.245,
+   "stale_snapshot": 0.998
+  },
+  "lookup_tps": {
+   "index": 0.95,
+   "sample10": -0.005,
+   "stale_snapshot": 0.998
+  },
+  "top_tps_id": {
+   "index": 0.95,
+   "sample10": 0.245,
+   "stale_snapshot": 0.398
+  }
+ }
+}
