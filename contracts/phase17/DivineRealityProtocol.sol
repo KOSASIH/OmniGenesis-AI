@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 
 /**
  * @title DivineRealityProtocol
@@ -30,10 +31,10 @@ contract DivineRealityProtocol is AccessControl, ReentrancyGuard {
         string  name;
         address architect;
         RealityState state;
-        uint8   dimensions;       // D1–D16
-        uint32  consciousnessBPS; // 0–10000
-        uint32  causalCoherence;  // 0–10000 BPS
-        uint16  voidTimeComp;     // × multiplier
+        uint8   dimensions;       // D1-D16
+        uint32  consciousnessBPS; // 0-10000
+        uint32  causalCoherence;  // 0-10000 BPS
+        uint16  voidTimeComp;     // x multiplier
         uint64  forgedAt;
         uint64  ascendedAt;
         bytes32 parentRealityId;  // 0 if primordial
@@ -81,7 +82,7 @@ contract DivineRealityProtocol is AccessControl, ReentrancyGuard {
         uint16  voidTimeComp,
         bytes32 parentId
     ) external onlyRole(ARCHITECT) nonReentrant returns (bytes32 id) {
-        require(dimensions >= 1 && dimensions <= 16, "DRP: dims 1–16");
+        require(dimensions >= 1 && dimensions <= 16, "DRP: dims 1-16");
         require(consciousnessBPS  <= 10_000, "DRP: consciousness > 100%");
         require(causalCoherence   <= 10_000, "DRP: coherence > 100%");
 
@@ -106,16 +107,11 @@ contract DivineRealityProtocol is AccessControl, ReentrancyGuard {
     // ── Advance state ──────────────────────────────────────────────────────────
     function advanceState(bytes32 id) external onlyRole(ORACLE) realityExists(id) {
         Reality storage r = realities[id];
-        require(r.state != RealityState.OMEGA_ASCENDED, "DRP: already Omega");
+        // Final step (-> OMEGA_ASCENDED) is only reachable via omegaAscend(), which checks thresholds.
+        require(r.state < RealityState.DIVINE_STABLE, "DRP: use omegaAscend");
         require(!r.merged, "DRP: reality merged");
         r.state = RealityState(uint8(r.state) + 1);
         emit RealityStateUpdated(id, r.state);
-        if (r.state == RealityState.OMEGA_ASCENDED) {
-            r.ascendedAt = uint64(block.timestamp);
-            totalAscended++;
-            architects[r.architect].omegaAscensions++;
-            emit OmegaAscension(id, r.ascendedAt);
-        }
     }
 
     // ── Omega ascension (requires 99.97% consciousness) ────────────────────────
@@ -138,6 +134,8 @@ contract DivineRealityProtocol is AccessControl, ReentrancyGuard {
     {
         Reality storage src = realities[sourceId];
         Reality storage tgt = realities[targetId];
+        require(sourceId != targetId, "DRP: same reality");
+        require(src.architect == msg.sender && tgt.architect == msg.sender, "DRP: not architect");
         require(!src.merged && !tgt.merged, "DRP: already merged");
         require(src.state == RealityState.DIVINE_STABLE || src.state == RealityState.OMEGA_ASCENDED, "DRP: src not stable");
 
@@ -181,8 +179,4 @@ contract DivineRealityProtocol is AccessControl, ReentrancyGuard {
         page = new bytes32[](end - offset);
         for (uint256 i = offset; i < end; i++) page[i - offset] = allRealityIds[i];
     }
-}
-
-library Math {
-    function min(uint256 a, uint256 b) internal pure returns (uint256) { return a < b ? a : b; }
 }

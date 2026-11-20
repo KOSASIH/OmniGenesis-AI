@@ -26,7 +26,7 @@ contract NeuromorphicConsensus is AccessControl, ReentrancyGuard {
     struct Neuron {
         address addr;
         string  layer;            // Input / Dendrite / Synapse / Cortex / Prefrontal / Quantum / Output
-        uint32  synapticWeightBPS;// 0–10000
+        uint32  synapticWeightBPS;// 0-10000
         uint32  firingRate;       // Hz (blocks per second proxy)
         uint64  lastFiredBlock;
         NeuronState state;
@@ -56,6 +56,8 @@ contract NeuromorphicConsensus is AccessControl, ReentrancyGuard {
     address[] public allNeurons;
     mapping(bytes32 => CorticalColumn) public columns;
     bytes32[] public allColumnIds;
+    mapping(bytes32 => mapping(address => bool)) public isMember;
+    uint64 public constant CONSENSUS_WINDOW = 3; // blocks
     mapping(bytes32 => SynapticBond) public synapticBonds; // keccak(A,B) => bond
     uint256 public totalConsensusFirings;
     uint256 public globalSynapticStrength;
@@ -103,6 +105,7 @@ contract NeuromorphicConsensus is AccessControl, ReentrancyGuard {
         for (uint i = 0; i < initialNeurons.length; i++) {
             require(neurons[initialNeurons[i]].addr != address(0), "NC: neuron not registered");
             totalW += neurons[initialNeurons[i]].synapticWeightBPS;
+            isMember[id][initialNeurons[i]] = true;
         }
         columns[id] = CorticalColumn({
             id: id, name: name,
@@ -120,6 +123,7 @@ contract NeuromorphicConsensus is AccessControl, ReentrancyGuard {
     function fire(bytes32 columnId) external nonReentrant {
         Neuron storage n = neurons[msg.sender];
         require(n.addr != address(0), "NC: not a neuron");
+        require(isMember[columnId][msg.sender], "NC: not in column");
         require(n.state != NeuronState.PRUNED, "NC: pruned");
         require(block.number >= n.lastFiredBlock + REFRACTORY_PERIOD, "NC: refractory");
 
@@ -133,7 +137,7 @@ contract NeuromorphicConsensus is AccessControl, ReentrancyGuard {
             address peer = col.neurons[i];
             if (peer == msg.sender) continue;
             Neuron storage pn = neurons[peer];
-            if (pn.state == NeuronState.FIRING || block.number - pn.lastFiredBlock <= 2) {
+            if (pn.activationCount > 0 && block.number - pn.lastFiredBlock <= 2) {
                 bytes32 bondId = keccak256(abi.encodePacked(
                     msg.sender < peer ? msg.sender : peer,
                     msg.sender < peer ? peer : msg.sender
@@ -176,7 +180,8 @@ contract NeuromorphicConsensus is AccessControl, ReentrancyGuard {
         uint256 activeWeight;
         for (uint i = 0; i < col.neurons.length; i++) {
             Neuron storage n = neurons[col.neurons[i]];
-            if (n.state == NeuronState.FIRING && block.number - n.lastFiredBlock <= 1) {
+            if (n.activationCount > 0 && n.state != NeuronState.PRUNED
+                && block.number - n.lastFiredBlock <= CONSENSUS_WINDOW) {
                 activeWeight += n.synapticWeightBPS;
             }
         }

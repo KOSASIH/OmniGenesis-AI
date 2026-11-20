@@ -24,8 +24,8 @@ contract CosmicSovereigntyToken is ERC20, AccessControl, ReentrancyGuard {
 
     struct CosmicDomain {
         string  name;
-        uint256 sovereigntyBPS;   // 0–10000 (100% = absolute domain)
-        uint32  dimensionDepth;   // D1–D16
+        uint256 sovereigntyBPS;   // 0-10000 (100% = absolute domain)
+        uint32  dimensionDepth;   // D1-D16
         bool    temporalControl;
         bool    causalControl;
         uint64  lastClaimedAt;
@@ -37,6 +37,7 @@ contract CosmicSovereigntyToken is ERC20, AccessControl, ReentrancyGuard {
         string  description;
         uint256 costBurned;
         uint64  executedAt;
+        bool    resolved;
         bool    succeeded;
     }
 
@@ -44,7 +45,8 @@ contract CosmicSovereigntyToken is ERC20, AccessControl, ReentrancyGuard {
     struct Stake {
         uint256 amount;
         uint64  lockedUntil;
-        uint8   dimensionBonus; // D1–D16 bonus multiplier
+        uint64  lockSeconds;
+        uint8   dimensionBonus; // D1-D16: yield = amount * bonus% APR (pro rata)
     }
 
     mapping(address => CosmicDomain[]) public domains;
@@ -58,6 +60,7 @@ contract CosmicSovereigntyToken is ERC20, AccessControl, ReentrancyGuard {
     uint256 public totalBurned;
 
     event DomainClaimed(address indexed holder, string domainName, uint256 sovereigntyBPS);
+    event InterventionRequested(uint256 indexed id, address indexed by, string domain);
     event InterventionExecuted(uint256 indexed id, address indexed by, string domain, bool succeeded);
     event TierAscended(address indexed holder, SovereigntyTier newTier);
     event CausalModification(address indexed by, string description, uint256 costBurned);
@@ -89,7 +92,7 @@ contract CosmicSovereigntyToken is ERC20, AccessControl, ReentrancyGuard {
         bool causal
     ) external nonReentrant {
         require(sovereigntyBPS <= 10_000, "CSOV: BPS > 100%");
-        require(dimensionDepth >= 1 && dimensionDepth <= 16, "CSOV: dim 1–16");
+        require(dimensionDepth >= 1 && dimensionDepth <= 16, "CSOV: dim 1-16");
         uint256 cost = (sovereigntyBPS * 100e18) / 10_000; // proportional to claimed %
         require(balanceOf(msg.sender) >= cost, "CSOV: insufficient balance");
         _burn(msg.sender, cost);
@@ -104,22 +107,31 @@ contract CosmicSovereigntyToken is ERC20, AccessControl, ReentrancyGuard {
         emit DomainClaimed(msg.sender, name, sovereigntyBPS);
     }
 
-    // ── Causal intervention ───────────────────────────────────────────────────
+    // -- Causal intervention: burn is immediate, outcome is attested by the oracle
+    // (no on-chain pseudo-randomness: block data is manipulable by validators).
     function executeIntervention(
         string calldata domainName,
         string calldata description
-    ) external nonReentrant {
+    ) external nonReentrant returns (uint256 id) {
         require(balanceOf(msg.sender) >= INTERVENTION_COST, "CSOV: need 1K CSOV");
         _burn(msg.sender, INTERVENTION_COST);
         totalBurned += INTERVENTION_COST;
-        uint256 id = totalInterventions++;
-        bool success = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, id))) % 100 < 97;
+        id = totalInterventions++;
         interventions[id] = Intervention({
             initiator: msg.sender, domainName: domainName,
             description: description, costBurned: INTERVENTION_COST,
-            executedAt: uint64(block.timestamp), succeeded: success
+            executedAt: uint64(block.timestamp), resolved: false, succeeded: false
         });
-        emit InterventionExecuted(id, msg.sender, domainName, success);
+        emit InterventionRequested(id, msg.sender, domainName);
+    }
+
+    function resolveIntervention(uint256 id, bool succeeded) external onlyRole(SOVEREIGNTY_ORACLE) {
+        require(id < totalInterventions, "CSOV: unknown intervention");
+        Intervention storage iv = interventions[id];
+        require(!iv.resolved, "CSOV: already resolved");
+        iv.resolved = true;
+        iv.succeeded = succeeded;
+        emit InterventionExecuted(id, iv.initiator, iv.domainName, succeeded);
     }
 
     // ── Reality fork ──────────────────────────────────────────────────────────
@@ -133,27 +145,38 @@ contract CosmicSovereigntyToken is ERC20, AccessControl, ReentrancyGuard {
 
     // ── Dimensional staking ────────────────────────────────────────────────────
     function stake(uint256 amount, uint8 dimensionBonus, uint64 lockSeconds) external nonReentrant {
-        require(dimensionBonus >= 1 && dimensionBonus <= 16, "CSOV: dim 1–16");
-        require(lockSeconds >= 7 days && lockSeconds <= 365 days, "CSOV: 7d–365d lock");
+        require(amount > 0, "CSOV: zero amount");
+        require(dimensionBonus >= 1 && dimensionBonus <= 16, "CSOV: dim 1-16");
+        require(lockSeconds >= 7 days && lockSeconds <= 365 days, "CSOV: 7d-365d lock");
         require(stakes[msg.sender].amount == 0, "CSOV: already staked");
         _transfer(msg.sender, address(this), amount);
         stakes[msg.sender] = Stake({
             amount: amount,
             lockedUntil: uint64(block.timestamp) + lockSeconds,
+            lockSeconds: lockSeconds,
             dimensionBonus: dimensionBonus
         });
+        _updateTier(msg.sender);
+    }
+
+    function pendingYield(address who) public view returns (uint256) {
+        Stake memory s = stakes[who];
+        if (s.amount == 0) return 0;
+        // bonus% APR, pro rata over the lock period
+        return (s.amount * s.dimensionBonus * s.lockSeconds) / (365 days * 100);
     }
 
     function unstake() external nonReentrant {
-        Stake storage s = stakes[msg.sender];
+        Stake memory s = stakes[msg.sender];
         require(s.amount > 0, "CSOV: nothing staked");
         require(block.timestamp >= s.lockedUntil, "CSOV: locked");
-        uint256 yield = (s.amount * s.dimensionBonus * 100) / (10_000 * 30 days / (s.lockedUntil - (block.timestamp - s.lockedUntil)));
-        uint256 total = s.amount + yield;
+        uint256 reward = pendingYield(msg.sender);
         delete stakes[msg.sender];
-        require(total <= balanceOf(address(this)) + (MAX_SUPPLY - totalSupply()), "CSOV: yield pool dry");
-        if (yield > 0 && totalSupply() + yield <= MAX_SUPPLY) _mint(msg.sender, yield);
+        // reward is minted only while the hard cap allows it
+        if (reward > MAX_SUPPLY - totalSupply()) reward = MAX_SUPPLY - totalSupply();
+        if (reward > 0) _mint(msg.sender, reward);
         _transfer(address(this), msg.sender, s.amount);
+        _updateTier(msg.sender);
     }
 
     // ── Internal tier update ──────────────────────────────────────────────────

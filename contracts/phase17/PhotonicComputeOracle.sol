@@ -27,7 +27,7 @@ contract PhotonicComputeOracle is AccessControl, ReentrancyGuard {
         string  location;         // e.g. "D9-Cluster-Alpha"
         uint256 frequencyTHz;     // operating frequency
         uint256 bandwidthTbps;    // throughput in Tbps
-        uint8   relayDepth;       // 1–16
+        uint8   relayDepth;       // 1-16
         PhotonicNodeType nodeType;
         bool    quantumEntangled;
         bytes32 entangledPairId;  // partner node ID if entangled
@@ -93,8 +93,8 @@ contract PhotonicComputeOracle is AccessControl, ReentrancyGuard {
         uint8 relayDepth,
         PhotonicNodeType nodeType
     ) external onlyRole(PHOTON_RELAY) returns (bytes32 id) {
-        require(frequencyTHz >= 1 && frequencyTHz <= 10_000, "PCO: freq 1–10000 THz");
-        require(relayDepth >= 1 && relayDepth <= MAX_RELAY_DEPTH, "PCO: depth 1–16");
+        require(frequencyTHz >= 1 && frequencyTHz <= 10_000, "PCO: freq 1-10000 THz");
+        require(relayDepth >= 1 && relayDepth <= MAX_RELAY_DEPTH, "PCO: depth 1-16");
 
         id = keccak256(abi.encodePacked(location, block.timestamp, allNodeIds.length));
         nodes[id] = PhotonicNode({
@@ -133,12 +133,13 @@ contract PhotonicComputeOracle is AccessControl, ReentrancyGuard {
         require(nodes[nodeId].id != bytes32(0), "PCO: unknown node");
 
         jobId = keccak256(abi.encodePacked(nodeId, block.timestamp, allJobIds.length));
-        bool verified = resultHash != 0 && latencyNs < SPEED_OF_LIGHT; // sub-light constraint
+        // Attestation only: the contract cannot verify the computation itself.
+        bool verified = resultHash != 0 && latencyNs > 0;
         jobs[jobId] = ComputeJob({
             id: jobId, nodeId: nodeId, jobType: jobType,
             inputHash: inputHash, resultHash: resultHash,
             latencyNs: latencyNs, energyPhotons: energyPhotons,
-            startedAt: uint64(block.timestamp - 1),
+            startedAt: uint64(block.timestamp),
             completedAt: uint64(block.timestamp),
             verified: verified
         });
