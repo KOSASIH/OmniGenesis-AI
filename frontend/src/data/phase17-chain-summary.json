@@ -1,0 +1,34 @@
+{
+ "total": 1000,
+ "byCategory": {
+  "CausalAI": 100,
+  "CosmicDAO": 100,
+  "CosmicSovereignty": 100,
+  "DivineMind": 100,
+  "DivineReality": 100,
+  "Neuromorphic": 100,
+  "OmegaPoint": 100,
+  "Photonic": 100,
+  "QuantumNeural": 100,
+  "TemporalSovereignty": 100
+ },
+ "byStatus": {
+  "PLANNED": 800,
+  "SEEDING": 200
+ },
+ "byConsensus": {
+  "CausalDAGPoS": 100,
+  "CosmicDAOPoS": 100,
+  "CosmicPoS": 100,
+  "DivineConsciousnessPoA": 100,
+  "DivineRealityBFT": 100,
+  "NeuromorphicPoW": 100,
+  "OmegaPointBFT": 100,
+  "PhotonicPoA": 100,
+  "QuantumNeuralPoS": 100,
+  "TemporalDPoS": 100
+ },
+ "maxTargetTps": 63103,
+ "meanTargetTps": 32551.5,
+ "deployed": 0
+}

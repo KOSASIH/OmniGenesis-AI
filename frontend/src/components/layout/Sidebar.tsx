@@ -64,7 +64,41 @@ const NAV_SECTIONS: NavSection[] = [
       { id: "universal",     icon: "✨", label: "Universal Mind Synthesizer", badge: "NEW" },
       { id: "divarch",       icon: "✦",  label: "Divine Architect Engine",    badge: "NEW" },
       { id: "convergence",   icon: "Ω",  label: "Omega Convergence Hub",      badge: "NEW" },
-      { id: "transcendence", icon: "⚡", label: "Transcendence Protocol",     badge: "NEW" },
+      { id: "transcendence", icon: "⚡", label: "Transcendence Protocol",     badge: "$TRNS" },
+    ],
+  },
+  {
+    title: "Phase 16 — Infinite Transcendence",
+    phase: "P16",
+    color: "text-white",
+    items: [
+      { id: "infinite",      icon: "∞",   label: "Infinite Consciousness Matrix", badge: "$AIT" },
+      { id: "absolute",      icon: "👁",  label: "Absolute Intelligence Core",    badge: "$AIT" },
+      { id: "omniverse",     icon: "🌌",  label: "Omniverse Gateway",             badge: "D16" },
+      { id: "realityforge",  icon: "⚛️",  label: "Quantum Reality Forge",         badge: "×847" },
+      { id: "eternalechoagi",icon: "🔮",  label: "EternalEcho AGI",               badge: "∞" },
+    ],
+  },
+  {
+    title: "Phase 17 — Divine Omnipotence",
+    phase: "P17",
+    color: "text-yellow-200",
+    items: [
+      { id: "cosmicore",     icon: "👑",  label: "Cosmic Intelligence Core",      badge: "NEW" },
+      { id: "divinereality", icon: "✦",   label: "Divine Reality Forge",          badge: "$CSOV" },
+      { id: "neuroqbrain",   icon: "🧠",  label: "Neuromorphic Quantum Brain",    badge: "NEW" },
+      { id: "causalengine",  icon: "🔗",  label: "Universal Causality Engine",    badge: "NEW" },
+      { id: "omegapoint",    icon: "Ω",   label: "Omega Point Singularity",       badge: "NEW" },
+    ],
+  },
+  {
+    title: "Phase 18 — Measured Intelligence",
+    phase: "P18",
+    color: "text-emerald-200",
+    items: [
+      { id: "agentlab",      icon: "📊",  label: "Agent Benchmark Lab",           badge: "NEW" },
+      { id: "chainregistry", icon: "🗂️",  label: "Chain Registry Explorer",       badge: "1K" },
+      { id: "assurance",     icon: "🛡️",  label: "Contract Assurance Board",      badge: "32 tests" },
     ],
   },
 ];
@@ -75,6 +109,9 @@ const PHASE_ACCENT: Record<string, string> = {
   P13: "bg-orange-500",
   P14: "bg-purple-500",
   P15: "bg-yellow-500",
+  P16: "bg-white",
+  P17: "bg-yellow-300",
+  P18: "bg-emerald-400",
 };
 
 const ACTIVE_BG: Record<string, string> = {
@@ -83,6 +120,9 @@ const ACTIVE_BG: Record<string, string> = {
   P13: "bg-orange-900/30 border-orange-500/50",
   P14: "bg-purple-900/40 border-purple-500/60",
   P15: "bg-yellow-900/40 border-yellow-500/60",
+  P16: "bg-white/10 border-white/40",
+  P17: "bg-yellow-900/30 border-yellow-300/50",
+  P18: "bg-emerald-900/30 border-emerald-400/50",
 };
 
 const HOVER_BG: Record<string, string> = {
@@ -91,6 +131,9 @@ const HOVER_BG: Record<string, string> = {
   P13: "hover:bg-orange-900/20",
   P14: "hover:bg-purple-900/20",
   P15: "hover:bg-yellow-900/20",
+  P16: "hover:bg-white/5",
+  P17: "hover:bg-yellow-900/15",
+  P18: "hover:bg-emerald-900/15",
 };
 
 function getSectionForPanel(panelId: PanelId): string {
@@ -126,7 +169,7 @@ export default function Sidebar({ activePanel, setActivePanel }: SidebarProps) {
             <span className="font-black text-sm text-white leading-tight">OmniGenesis AI</span>
             <div className="flex items-center gap-1 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
-              <span className="text-xs text-yellow-400 font-mono">Phase 15 · v5.0</span>
+              <span className="text-xs text-yellow-400 font-mono">Phase 18 · v8.0</span>
             </div>
           </motion.div>
         )}
@@ -236,9 +279,9 @@ export default function Sidebar({ activePanel, setActivePanel }: SidebarProps) {
         <div className="px-4 py-3 border-t border-white/10 flex-shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-            <span className="text-xs text-white/40">25 Panels · 22 Contracts</span>
+            <span className="text-xs text-white/40">38 Panels</span>
           </div>
-          <div className="text-xs text-white/20 mt-0.5">Phase 15 · 11 Dims · 10K Chains · Ω</div>
+          <div className="text-xs text-white/20 mt-0.5">Phase 18 · registry: 1,000 planned chains (0 deployed)</div>
         </div>
       )}
     </motion.aside>
