@@ -1,0 +1,79 @@
+{
+ "phase": 17,
+ "total": 1000,
+ "firstId": 12001,
+ "lastId": 13000,
+ "deployed": false,
+ "files": [
+  {
+   "file": "chains-00.json",
+   "count": 100,
+   "firstId": 12001,
+   "lastId": 12100,
+   "sha256": "0a7ed33ae7cc9b5cfa1a28ab4c679e002bcb9aa48e936fa485baf4d7061a13f8"
+  },
+  {
+   "file": "chains-01.json",
+   "count": 100,
+   "firstId": 12101,
+   "lastId": 12200,
+   "sha256": "68099f138cdd23b7d8ca7a546e1de9b86b5004ee250212cf4d55f17cfec8e18f"
+  },
+  {
+   "file": "chains-02.json",
+   "count": 100,
+   "firstId": 12201,
+   "lastId": 12300,
+   "sha256": "f856407b92d94f54465ad6666cfee32990420979642112f2bcca18156fbc8eb6"
+  },
+  {
+   "file": "chains-03.json",
+   "count": 100,
+   "firstId": 12301,
+   "lastId": 12400,
+   "sha256": "ab744821b5a4939479769284584854998a443c8537d2b806c9bc02a223dcf53a"
+  },
+  {
+   "file": "chains-04.json",
+   "count": 100,
+   "firstId": 12401,
+   "lastId": 12500,
+   "sha256": "4d8a2395c9220d2538fc9635ac816b6a3102818625a961fe3e8d13be6c3b5107"
+  },
+  {
+   "file": "chains-05.json",
+   "count": 100,
+   "firstId": 12501,
+   "lastId": 12600,
+   "sha256": "b1b9b27931f23fa74a115af81dfdf8016c083d5e24c1959129c870f7cd3cfe1c"
+  },
+  {
+   "file": "chains-06.json",
+   "count": 100,
+   "firstId": 12601,
+   "lastId": 12700,
+   "sha256": "316e4378a1482e160a1c0f27dd6eb9e0125fbc5ad033f27ba5aad81f72df56fc"
+  },
+  {
+   "file": "chains-07.json",
+   "count": 100,
+   "firstId": 12701,
+   "lastId": 12800,
+   "sha256": "28e6b4a86aee3997bf41a13fbb73d81aaf8c9aad4cfaa9aaf9168378d202f20d"
+  },
+  {
+   "file": "chains-08.json",
+   "count": 100,
+   "firstId": 12801,
+   "lastId": 12900,
+   "sha256": "fc79457b5b40925845d7cffbfa5ec33d498789962fc70ac5aa58bfc05683f065"
+  },
+  {
+   "file": "chains-09.json",
+   "count": 100,
+   "firstId": 12901,
+   "lastId": 13000,
+   "sha256": "ee41bf0f6c12feb875724d1861900d06da4ca89c7ecf9a36a25fed449b8644b4"
+  }
+ ]
+}
