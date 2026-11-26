@@ -134,6 +134,7 @@ export default function MetricsGrid() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
               <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} interval={4} />
               <YAxis tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1e6).toFixed(0)}M`} />
+              <YAxis yAxisId={1} hide />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="tvl" stroke="#a855f7" strokeWidth={2} fill="url(#tvlGrad)" />
               <Area type="monotone" dataKey="agents" stroke="#06b6d4" strokeWidth={1.5} fill="url(#agentGrad)" yAxisId={1} hide />

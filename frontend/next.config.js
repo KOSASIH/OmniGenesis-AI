@@ -1,7 +1,10 @@
+const { PHASE_DEVELOPMENT_SERVER } = require("next/constants");
+
 /** @type {import("next").NextConfig} */
-const nextConfig = {
+module.exports = (phase) => ({
   reactStrictMode: true,
   output: "standalone",
+  distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next",
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
@@ -23,6 +26,4 @@ const nextConfig = {
     };
     return config;
   },
-};
-
-module.exports = nextConfig;
+});
