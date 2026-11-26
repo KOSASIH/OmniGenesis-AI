@@ -75,7 +75,7 @@ export default function HyperDimensionalFabric() {
       };
 
       // 4D hypercube vertices (16 total) — simplified to 2D projection
-      const vertices4D = [];
+      const vertices4D: { px: number; py: number }[] = [];
       for (let i = 0; i < 16; i++) {
         const x = (i & 1) ? outer : -outer;
         const y = (i & 2) ? outer : -outer;

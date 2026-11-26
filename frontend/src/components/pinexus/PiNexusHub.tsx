@@ -54,7 +54,7 @@ const PiTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-const STATUS_META = {
+const STATUS_META: Record<string, { text: string; color: string; bg: string; border: string }> = {
   live:        { text: "🟢 Live", color: "text-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-400/25" },
   beta:        { text: "🟡 Beta", color: "text-amber-400",   bg: "bg-amber-400/10",   border: "border-amber-400/25" },
   development: { text: "🔵 Dev",  color: "text-blue-400",    bg: "bg-blue-400/10",     border: "border-blue-400/25" },

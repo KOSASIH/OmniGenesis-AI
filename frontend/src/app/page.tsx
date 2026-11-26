@@ -3,22 +3,22 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 
 // ─── Phase Core panels ────────────────────────────────────────────────────────
-const Overview = dynamic(() => import("@/components/overview/OmniOverview"), { ssr: false });
+const Overview = dynamic(() => import("@/components/dashboard/MetricsGrid"), { ssr: false });
 const AgentSwarm = dynamic(() => import("@/components/agents/AgentSwarmMonitor"), { ssr: false });
 const DeFiSuite = dynamic(() => import("@/components/defi/DeFiDashboard"), { ssr: false });
-const HyperChainBridge = dynamic(() => import("@/components/bridge/HyperChainFabric"), { ssr: false });
-const Governance = dynamic(() => import("@/components/governance/OnChainGovernance"), { ssr: false });
+const HyperChainBridge = dynamic(() => import("@/components/bridge/BridgeMonitor"), { ssr: false });
+const Governance = dynamic(() => import("@/components/governance/GovernanceDashboard"), { ssr: false });
 
 // ─── AetherNova Era panels ────────────────────────────────────────────────────
 const AetherNovaForge = dynamic(() => import("@/components/aethernova/AetherNovaForge"), { ssr: false });
-const Neuromorphic = dynamic(() => import("@/components/neuro/Phase12Neuromorphic"), { ssr: false });
+const Neuromorphic = dynamic(() => import("@/components/phase12/Phase12Dashboard"), { ssr: false });
 const QuantumLab = dynamic(() => import("@/components/quantum/QuantumLab"), { ssr: false });
-const EternalEcho = dynamic(() => import("@/components/eternal/EternalEchoAGI"), { ssr: false });
+const EternalEcho = dynamic(() => import("@/components/eternaecho/EternalEchoAGI"), { ssr: false });
 const VoidTimeCompute = dynamic(() => import("@/components/voidtime/VoidTimeCompute"), { ssr: false });
 const PiNexusHub = dynamic(() => import("@/components/pinexus/PiNexusHub"), { ssr: false });
-const OmniSwap = dynamic(() => import("@/components/swap/OmniSwapDEX"), { ssr: false });
+const OmniSwap = dynamic(() => import("@/components/swap/OmniSwap"), { ssr: false });
 const IslamicNetwork = dynamic(() => import("@/components/islamic/IslamicBlockchainNetwork"), { ssr: false });
-const OmniConsole = dynamic(() => import("@/components/console/OmniConsole"), { ssr: false });
+const OmniConsole = dynamic(() => import("@/components/ui/OmniConsole"), { ssr: false });
 
 // ─── Phase 13 — AGI Singularity ───────────────────────────────────────────────
 const OmniAGIConsciousness = dynamic(() => import("@/components/agi/OmniAGIConsciousness"), { ssr: false });

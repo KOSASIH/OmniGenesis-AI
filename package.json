@@ -2,7 +2,14 @@
   "name": "omnigenesis-ai",
   "version": "1.0.0",
   "description": "OmniGenesis AI: The Divine Architect of Infinite Innovation",
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "test:coverage": "hardhat coverage",

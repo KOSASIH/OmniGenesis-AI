@@ -161,7 +161,7 @@ export default function AbsoluteIntelligenceCore() {
             onClick={() => setSelectedPillar(i)}
             whileHover={{ scale: 1.02 }}
             className={`p-4 rounded-xl border cursor-pointer transition-all ${p.bg} ${selectedPillar === i ? "ring-1 ring-current" : ""}`}
-            style={{ ringColor: p.color }}>
+            style={{ borderColor: selectedPillar === i ? p.color : undefined }}>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">{p.symbol}</span>
               <span className="font-bold text-sm" style={{ color: p.color }}>{p.name}</span>

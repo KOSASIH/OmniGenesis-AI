@@ -76,9 +76,9 @@ export default function UniversalMindSynthesizer() {
       }
 
       // Dimension nodes converging toward center
+      const convergeFactor = convergenceProgress / 100;
       DIMENSION_NODES.forEach((n, i) => {
         const angleRad = (n.angle * Math.PI) / 180;
-        const convergeFactor = convergenceProgress / 100;
         const currentR = n.r * (1 - convergeFactor * 0.35) + 10 * Math.sin(t + i);
         const nx = cx + currentR * Math.cos(angleRad + t * 0.03);
         const ny = cy + currentR * Math.sin(angleRad + t * 0.03);
